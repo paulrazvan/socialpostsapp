@@ -10,7 +10,7 @@
   function txt(L, text, c) {
     if (!has(text)) return null;
     const head = c.role === 'head';
-    const face = head ? { ...L.fp.head } : { family: L.fp.body.family, weight: c.weight || 400, fallback: 'sans-serif' };
+    const face = c.faceObj || (head ? { ...L.fp.head } : { family: L.fp.body.family, weight: c.weight || 400, fallback: 'sans-serif' });
     const lay = E.layout(L.ctx, text, {
       face,
       hlFace: L.fp.it,
@@ -30,6 +30,7 @@
       w: lay.w, h: lay.h, lay, desc: lay.size * (head ? 0.26 : 0.2),
       draw: (x, y) => E.drawText(L.ctx, lay, x, y, {
         align: c.align, color: c.color || L.th.text, hlColor: c.hlColor || L.th.hl,
+        outlineAll: c.outline, outlineColor: c.outlineColor,
         marker: c.marker || L.th.marker, markerInk: c.markerInk || (c.color && c.color !== L.th.text ? null : L.th.markerInk), italicColor: c.italicColor, rng: L.rng
       })
     };
@@ -784,6 +785,15 @@
       { b: cta(L, 'pill', { maxW: area.w }), g: u * 4.4 }
     ], 'center', 'center').draw();
   });
+
+  // Categorii pentru filtrul de stiluri.
+  const TAGS = { editorial: ['elegant', 'text'], promo: ['offer'], split: ['photo'], poster: ['photo'], brutal: ['fun'],
+    bento: ['photo', 'offer'], burst: ['fun', 'offer'], swiss: ['text', 'elegant'], aura: ['text', 'elegant'] };
+  TPL.forEach((t) => { t.tags = TAGS[t.id] || []; });
+
+  // Unelte comune, folosite și de stilurile din templates-more.js.
+  A.T = { add, has, txt, hlOn, eyebrow, subtitle, contact, headline, detail, offerGiant, cta, pill, offerLabel, logo,
+    offerBadge, topRow, compose, spacer, paintBg };
 
   // ---------- randare post ----------
   function drawSafe(ctx, fmt, W, H, u) {

@@ -8,17 +8,20 @@ Nu trebuie instalat nimic. Deschizi `index.html` în Chrome, Edge, Firefox sau S
 
 1. **Text**: brand, etichetă, titlu, subtitlu, ofertă, buton și contact. Câmpurile goale dispar din design, fără spații goale.
    Pune *între steluțe* cuvântul din titlu pe care vrei să-l scoți în evidență. Enter face rând nou.
-2. **Tipografie**: 10 perechi de fonturi testate (titlu + text), toate cu diacritice românești corecte.
+2. **Tipografie**: 16 perechi de fonturi testate (titlu + text), toate cu diacritice românești corecte.
    Cuvântul evidențiat poate fi italic, marker, colorat, subliniat de mână sau doar conturat.
-3. **Culori**: 13 palete gata făcute, culori proprii sau o paletă generată din culoarea brandului.
+3. **Culori**: 30 de palete gata făcute, culori proprii sau o paletă generată din culoarea brandului.
    Varianta „Inversată” și „Pe accent” schimbă rolurile culorilor dintr-un clic.
 4. **Fundal și imagini**: fundal plin, degradeu, gradient moale, model sau fotografie. Fotografia are filtre (alb-negru, duoton în culorile brandului, peliculă), încadrare și zoom. Logo PNG/SVG, cu opțiunea de a-l recolora.
 5. **Formate**: bifezi ce-ți trebuie. Fiecare stil se reașază singur pe fiecare format.
-6. **Descarcă**: PNG sau JPG pentru fiecare format, sau „Descarcă tot” pentru o arhivă ZIP cu toate imaginile și textul descrierii.
+6. **Inspirație**: fila „Inspirație” combină automat stilul, paleta, fonturile și evidențierea pe textul tău și îți arată câte modele vrei („Arată încă 24”, „Altă serie”). Un clic aplică modelul. Combinațiile posibile sunt de ordinul sutelor de mii.
+7. **Descarcă**: PNG sau JPG pentru fiecare format, sau „Descarcă tot” pentru o arhivă ZIP cu toate imaginile și textul descrierii.
 
 Tot ce scrii se păstrează în browser. Poți salva un **kit de brand** (culori, fonturi, logo, contact) și îl poți exporta ca fișier, ca să-l folosești și pe alt calculator.
 
-## Stiluri
+## Stiluri (25)
+
+Le poți filtra după categorie: Promoții, Cu foto, Doar text, Elegante, Jucăușe.
 
 | Stil | Când îl folosești |
 |---|---|
@@ -31,6 +34,22 @@ Tot ce scrii se păstrează în browser. Poți salva un **kit de brand** (culori
 | Sticker | Ton jucăuș: ștampilă de preț, compoziție centrată. |
 | Swiss | Aspect de agenție: grilă vizibilă, asimetrie, cifre mari. |
 | Gradient | Minimal și calm: gradient moale cu granulație fină. |
+| Minimal | Doar esențialul, mult spațiu gol. |
+| Citat | Titlul devine o replică, cu ghilimele mari și semnătura brandului. |
+| Voucher | Bilet cu perforație: reduceri, carduri cadou, invitații. |
+| Etichetă | Etichetă de preț agățată, oferta în prim-plan. |
+| Polaroid | Fotografie instant cu bandă adezivă și notiță scrisă de mână. |
+| Arcadă | Fotografie în arcadă: saloane, boutique-uri, wellness. |
+| Cerc | Fotografie decupată rotund, care iese din cadru. |
+| Copertă | Copertă de revistă, cu numele brandului ca titlu de publicație. |
+| Benzi | Benzi diagonale cu oferta repetată: lansări, Black Friday. |
+| Supergrafic | O cifră sau o literă uriașă, tăiată de margini. |
+| Ecou | Titlul repetat în contur, ritm tipografic. |
+| Beneficii | Subtitlul devine o listă cu bife: servicii, pachete. |
+| Diagonal | Fundal tăiat în diagonală, dinamic. |
+| Retro | Raze de soare și umbră tare, aer anii ’70. |
+| Conversație | Mesaje ca într-un chat, ton apropiat. |
+| Ziar | Prima pagină de ziar, cu titlu de știre. |
 
 ## Formate incluse
 
@@ -85,7 +104,8 @@ css/app.css       stilul interfeței
 js/data.js        formate, fonturi, palete, texte de pornire
 js/color.js       contrast, palete derivate, roluri de culoare
 js/engine.js      așezarea textului, forme, filtre foto, granulație
-js/templates.js   cele 9 stiluri
+js/templates.js   stilurile de bază și uneltele comune de așezare
+js/templates-more.js  încă 16 stiluri
 js/advisor.js     consultantul și descrierea postării
 js/zip.js         arhiva ZIP pentru „Descarcă tot”
 js/app.js         legătura dintre panouri, previzualizare și export

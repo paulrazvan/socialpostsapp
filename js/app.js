@@ -28,7 +28,8 @@
     colors: pal(A.PALETTES[6]), palette: A.PALETTES[6].name, variant: 'normal', autoContrast: true,
     bgMode: 'auto', pattern: 'dots', photoFilter: 'none', fx: 0.5, fy: 0.5, zoom: 1, overlay: 0.6,
     logoTint: 'original', grain: 0.05, formats: [...A.DEFAULT_FORMATS], seed: 0, safe: false,
-    capKind: 'direct', keywords: 'cafea, cluj, coffeetogo', caption: '', captionEdited: false
+    capKind: 'direct', keywords: 'cafea, cluj, coffeetogo', caption: '', captionEdited: false,
+    tplFilter: 'all', tab: 'formats', ideaSeed: 1
   });
   const saved = store.get(KEY) || {};
   const st = Object.assign(defaults(), saved, { text: Object.assign({ ...A.SAMPLE }, saved.text || {}) });
@@ -49,8 +50,8 @@
 
   // ---------- fonturi ----------
   const loaded = new Set();
-  function ensureFonts() {
-    const fp = A.FONTS.find((f) => f.id === st.font) || A.FONTS[0];
+  function ensureFonts(fontId) {
+    const fp = A.FONTS.find((f) => f.id === (fontId || st.font)) || A.FONTS[0];
     const faces = [fp.head, fp.it, ...[400, 500, 600, 700].map((w) => ({ family: fp.body.family, weight: w }))];
     return Promise.all(faces.map((f) => {
       const key = E.font(f, 40);
@@ -93,14 +94,82 @@
     strip.append(b);
     return { t, b, cv };
   });
+  const inFilter = (t) => st.tplFilter === 'all' || (t.tags || []).includes(st.tplFilter);
   function renderStrip() {
     const fmt = selFormats()[0] || fmtById('feed45');
     thumbs.forEach(({ t, b, cv }) => {
       b.setAttribute('aria-checked', String(t.id === st.template));
-      draw(cv, fmt, t.id, 116);
+      b.hidden = !inFilter(t);
+      if (!b.hidden) draw(cv, fmt, t.id, 116);
     });
-    $('tpl-note').textContent = tplById(st.template).note;
+    $('tpl-note').textContent = `${tplById(st.template).name}: ${tplById(st.template).note.toLowerCase()}`;
+    stripNav();
   }
+  function stripNav() {
+    $('strip-prev').disabled = strip.scrollLeft < 4;
+    $('strip-next').disabled = strip.scrollLeft + strip.clientWidth > strip.scrollWidth - 4;
+  }
+  strip.addEventListener('scroll', stripNav, { passive: true });
+  $('strip-prev').addEventListener('click', () => strip.scrollBy({ left: -strip.clientWidth * 0.8, behavior: 'smooth' }));
+  $('strip-next').addEventListener('click', () => strip.scrollBy({ left: strip.clientWidth * 0.8, behavior: 'smooth' }));
+
+  // ---------- inspirație: combinații generate din textul utilizatorului ----------
+  const HL = ['italic', 'marker', 'color', 'underline', 'italic', 'outline'];
+  let ideaCount = 24, ideaKey = '';
+  function ideaList(n) {
+    const r = E.rng(st.ideaSeed * 7919 + 13);
+    const tpls = A.TEMPLATES.filter(inFilter);
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      const t = tpls[(i + Math.floor(r() * tpls.length)) % tpls.length];
+      const p = A.PALETTES[Math.floor(r() * A.PALETTES.length)];
+      const f = A.FONTS[Math.floor(r() * A.FONTS.length)];
+      const v = r();
+      out.push({ template: t.id, palette: p, font: f.id, hlStyle: HL[Math.floor(r() * HL.length)], variant: v < 0.72 ? 'normal' : v < 0.86 ? 'inv' : 'accent' });
+    }
+    return out;
+  }
+  const ideaState = (c) => ({ ...st, template: c.template, colors: pal(c.palette), font: c.font, hlStyle: c.hlStyle, variant: c.variant, bgMode: 'auto', seed: 0 });
+  async function renderIdeas() {
+    const fmt = selFormats()[0] || fmtById('feed45');
+    const list = ideaList(ideaCount);
+    await Promise.all([...new Set(list.map((c) => c.font))].map((f) => ensureFonts(f)));
+    const box = $('ideas');
+    const key = [st.ideaSeed, st.tplFilter, fmt.id].join('|');
+    if (key !== ideaKey) { box.innerHTML = ''; ideaKey = key; }
+    list.forEach((c, i) => {
+      let el = box.children[i];
+      if (!el) {
+        el = h('button', { type: 'button', class: 'idea' }, [h('canvas', { 'aria-hidden': 'true' }), h('b'), h('span')]);
+        el.addEventListener('click', () => applyIdea(el._idea));
+        box.append(el);
+      }
+      el._idea = c;
+      const fname = (A.FONTS.find((f) => f.id === c.font) || {}).name;
+      el.querySelector('b').textContent = tplById(c.template).name;
+      el.querySelector('span').textContent = `${c.palette.name} · ${fname}`;
+      el.setAttribute('aria-label', `Aplică modelul ${tplById(c.template).name}, paleta ${c.palette.name}, fonturi ${fname}`);
+      const cv = el.querySelector('canvas');
+      const k = Math.min(1, (190 * dpr()) / fmt.w);
+      cv.width = Math.round(fmt.w * k);
+      cv.height = Math.round(fmt.h * k);
+      const ctx = cv.getContext('2d');
+      ctx.setTransform(k, 0, 0, k, 0, 0);
+      A.renderPost(ctx, fmt, c.template, ideaState(c), assets);
+    });
+    while (box.children.length > list.length) box.lastChild.remove();
+    $('fmt-note').textContent = `${list.length} modele în formatul ${fmt.name}`;
+  }
+  function applyIdea(c) {
+    Object.assign(st, { template: c.template, colors: pal(c.palette), palette: c.palette.name, font: c.font, hlStyle: c.hlStyle,
+      variant: c.variant, bgMode: 'auto', tab: 'formats' });
+    update(true);
+    toast(`Model aplicat: ${tplById(c.template).name}, paleta ${c.palette.name}.`);
+    document.querySelector('.stage').scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  $('btn-ideas-more').addEventListener('click', () => { ideaCount += 24; renderIdeas(); });
+  $('btn-ideas-new').addEventListener('click', () => { st.ideaSeed = (st.ideaSeed || 1) + 1; ideaCount = 24; update(true); });
+  ['formats', 'ideas'].forEach((t) => $('tab-' + t).addEventListener('click', () => { st.tab = t; update(true); }));
 
   // Formate (planșa principală)
   const grid = $('grid');
@@ -174,7 +243,8 @@
     try {
       await ensureFonts();
       renderStrip();
-      renderGrid();
+      if (st.tab === 'ideas') await renderIdeas();
+      else renderGrid();
       renderCaption();
       renderInsights();
     } finally {
@@ -255,7 +325,7 @@
   chips('offer-ideas', A.OFFER_IDEAS, 'offer');
   chips('cta-ideas', A.CTA_IDEAS, 'cta');
 
-  const segs = { hl: 'hlStyle', variant: 'variant', bgMode: 'bgMode', photoFilter: 'photoFilter', logoTint: 'logoTint', capKind: 'capKind' };
+  const segs = { hl: 'hlStyle', variant: 'variant', bgMode: 'bgMode', photoFilter: 'photoFilter', logoTint: 'logoTint', capKind: 'capKind', tplFilter: 'tplFilter' };
   Object.entries(segs).forEach(([id, key]) => {
     $(id).querySelectorAll('button').forEach((b) => {
       b.setAttribute('role', 'radio');
@@ -496,7 +566,11 @@
     $('formats').querySelectorAll('input').forEach((cb) => { cb.checked = st.formats.includes(cb.dataset.v); });
     $('o-headScale').textContent = Math.round(st.headScale * 100) + '%';
     $('o-grain').textContent = st.grain ? Math.round(st.grain * 100) + '%' : 'fără';
-    $('pattern-field').hidden = !(st.bgMode === 'pattern' || (st.bgMode === 'auto' && ['brutal', 'burst'].includes(st.template)));
+    ['formats', 'ideas'].forEach((t) => {
+      $('tab-' + t).setAttribute('aria-selected', String(st.tab === t));
+      $('panel-' + t).hidden = st.tab !== t;
+    });
+    $('pattern-field').hidden = !(st.bgMode === 'pattern' || (st.bgMode === 'auto' && ['brutal', 'burst', 'ticket', 'polaroid'].includes(st.template)));
   }
 
   // ---------- pornire ----------

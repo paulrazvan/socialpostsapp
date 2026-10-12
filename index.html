@@ -181,13 +181,36 @@
       <div class="stage-head">
         <h2>Stil</h2>
         <p id="tpl-note"></p>
+        <div class="seg filter" id="tplFilter" role="radiogroup" aria-label="Categorii de stiluri">
+          <button type="button" data-v="all">Toate</button>
+          <button type="button" data-v="offer">Promoții</button>
+          <button type="button" data-v="photo">Cu foto</button>
+          <button type="button" data-v="text">Doar text</button>
+          <button type="button" data-v="elegant">Elegante</button>
+          <button type="button" data-v="fun">Jucăușe</button>
+        </div>
       </div>
-      <div class="strip" id="strip" role="radiogroup" aria-label="Stiluri"></div>
-      <div class="stage-head">
-        <h2>Formate</h2>
+      <div class="strip-wrap">
+        <button type="button" class="strip-nav prev" id="strip-prev" aria-label="Stilurile anterioare">&#8249;</button>
+        <div class="strip" id="strip" role="radiogroup" aria-label="Stiluri"></div>
+        <button type="button" class="strip-nav next" id="strip-next" aria-label="Stilurile următoare">&#8250;</button>
+      </div>
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="tab-formats" data-v="formats">Formate</button>
+        <button type="button" role="tab" id="tab-ideas" data-v="ideas">Inspirație</button>
         <p id="fmt-note"></p>
       </div>
-      <div class="grid" id="grid"></div>
+      <div id="panel-formats" role="tabpanel" aria-labelledby="tab-formats">
+        <div class="grid" id="grid"></div>
+      </div>
+      <div id="panel-ideas" role="tabpanel" aria-labelledby="tab-ideas" hidden>
+        <div class="ideas-head">
+          <p>Modele generate din textul tău: stil, paletă, fonturi și evidențiere combinate după aceleași reguli. Apasă pe unul ca să-l aplici.</p>
+          <button type="button" class="btn small" id="btn-ideas-new">Altă serie</button>
+        </div>
+        <div class="ideas" id="ideas"></div>
+        <div class="ideas-more"><button type="button" class="btn" id="btn-ideas-more">Arată încă 24</button></div>
+      </div>
     </section>
 
     <!-- ============ CONSULTANT ============ -->
@@ -237,6 +260,7 @@
   <script src="js/color.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/templates.js"></script>
+  <script src="js/templates-more.js"></script>
   <script src="js/advisor.js"></script>
   <script src="js/zip.js"></script>
   <script src="js/app.js"></script>

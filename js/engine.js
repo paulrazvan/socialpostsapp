@@ -217,7 +217,7 @@
           else runs.push((run = { x0: pp.x, x1: pp.x + pp.w }));
         } else run = null;
       });
-      if (mode === 'marker') {
+      if (mode === 'marker' && !p.outlineAll) {
         runs.forEach((r) => {
           const pad = size * 0.09, top = by - capH * 0.66, bot = by + size * 0.1;
           ctx.save();
@@ -232,17 +232,17 @@
       pos.forEach((pp) => {
         const s = pp.s;
         E.setFont(ctx, s.f, s.size, s.tr);
-        if (s.hl && mode === 'outline') {
+        if (p.outlineAll || (s.hl && mode === 'outline')) {
           ctx.lineWidth = Math.max(1, size * 0.03);
           ctx.lineJoin = 'round';
-          ctx.strokeStyle = p.color;
+          ctx.strokeStyle = p.outlineColor || p.color;
           ctx.strokeText(s.t, pp.x, by);
         } else {
           ctx.fillStyle = !s.hl ? p.color : mode === 'color' ? p.hlColor : mode === 'marker' && p.markerInk ? p.markerInk : mode === 'italic' && p.italicColor ? p.italicColor : p.color;
           ctx.fillText(s.t, pp.x, by);
         }
       });
-      if (mode === 'underline') runs.forEach((r) => scribble(ctx, r.x0, r.x1, by + size * 0.14, size, p.hlColor, rng));
+      if (mode === 'underline' && !p.outlineAll) runs.forEach((r) => scribble(ctx, r.x0, r.x1, by + size * 0.14, size, p.hlColor, rng));
     });
     E.resetFont(ctx);
     ctx.restore();
@@ -298,6 +298,77 @@
         ctx.quadraticCurveTo(cx + Math.cos(am) * r * 1.1, cy + Math.sin(am) * r * 1.1, px, py);
       }
     }
+    ctx.closePath();
+  };
+
+  // Arcadă: dreptunghi cu semicerc sus.
+  E.arch = function (ctx, x, y, w, h) {
+    const r = w / 2;
+    ctx.beginPath();
+    ctx.moveTo(x, y + h);
+    ctx.lineTo(x, y + r);
+    ctx.arc(x + r, y + r, r, Math.PI, 0);
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+  };
+  // Bilet cu colțuri rotunjite și decupaje semicirculare la linia de perforație.
+  // dir 'v': decupaje stânga/dreapta la înălțimea `at`; 'h': sus/jos la poziția orizontală `at`.
+  E.ticket = function (ctx, x, y, w, h, r, at, nr, dir) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    if (dir === 'h') {
+      ctx.lineTo(at - nr, y);
+      ctx.arc(at, y, nr, Math.PI, 0, true);
+    }
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    if (dir !== 'h') {
+      ctx.lineTo(x + w, at - nr);
+      ctx.arc(x + w, at, nr, -Math.PI / 2, Math.PI / 2, true);
+    }
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    if (dir === 'h') {
+      ctx.lineTo(at + nr, y + h);
+      ctx.arc(at, y + h, nr, 0, Math.PI, true);
+    }
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    if (dir !== 'h') {
+      ctx.lineTo(x, at + nr);
+      ctx.arc(x, at, nr, Math.PI / 2, -Math.PI / 2, true);
+    }
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  };
+  // Raze din centru (fundal retro).
+  E.rays = function (ctx, cx, cy, R, n, color, rot) {
+    ctx.save();
+    ctx.fillStyle = color;
+    const step = (Math.PI * 2) / n;
+    for (let i = 0; i < n; i += 2) {
+      const a = (rot || 0) + i * step;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+      ctx.lineTo(cx + Math.cos(a + step) * R, cy + Math.sin(a + step) * R);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  };
+  // Etichetă de preț cu vârful spre stânga și orificiu pentru sfoară.
+  E.tag = function (ctx, x, y, w, h, r) {
+    const p = h * 0.42;
+    ctx.beginPath();
+    ctx.moveTo(x + p, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + p, y + h);
+    ctx.lineTo(x, y + h / 2);
     ctx.closePath();
   };
 
