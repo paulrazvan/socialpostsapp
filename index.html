@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Atelier Postări</title>
+  <meta name="description" content="Studio de postări pentru pagini de social media: scrii textul, alegi culorile, primești postarea în toate dimensiunile.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" id="font-css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">Atelier</span>
+      <span class="brand-sub">studio de postări</span>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="btn ghost" id="btn-shuffle" title="Altă dispunere a elementelor decorative">Variație nouă</button>
+      <label class="switch" title="Arată zonele acoperite de interfața aplicațiilor">
+        <input type="checkbox" id="opt-safe"> <span>Zone sigure</span>
+      </label>
+      <button type="button" class="btn primary" id="btn-zip">Descarcă tot</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- ============ COMENZI ============ -->
+    <aside class="panel controls" aria-label="Setări postare">
+      <details open class="sec">
+        <summary>Text</summary>
+        <div class="fields">
+          <label class="field"><span>Brand</span>
+            <input id="f-brand" type="text" autocomplete="off" placeholder="Numele afacerii"></label>
+          <label class="field"><span>Etichetă <em>opțional</em></span>
+            <input id="f-eyebrow" type="text" autocomplete="off" placeholder="ex. Colecția de toamnă"></label>
+          <label class="field"><span>Titlu</span>
+            <textarea id="f-headline" rows="2" placeholder="Beneficiul principal, în 3–8 cuvinte"></textarea>
+            <small>Pune *între steluțe* cuvântul de evidențiat. Enter = rând nou.</small></label>
+          <label class="field"><span>Subtitlu <em>opțional</em></span>
+            <textarea id="f-subtitle" rows="3" placeholder="Un detaliu concret: ce, unde, pentru cine"></textarea></label>
+          <div class="row2">
+            <label class="field"><span>Ofertă</span>
+              <input id="f-offer" type="text" autocomplete="off" placeholder="-30%"></label>
+            <label class="field"><span>Detaliu ofertă</span>
+              <input id="f-detail" type="text" autocomplete="off" placeholder="până duminică"></label>
+          </div>
+          <div class="chips" id="offer-ideas" aria-label="Idei de ofertă"></div>
+          <label class="field"><span>Buton (îndemn)</span>
+            <input id="f-cta" type="text" autocomplete="off" placeholder="Comandă acum"></label>
+          <div class="chips" id="cta-ideas" aria-label="Idei de îndemn"></div>
+          <label class="field"><span>Contact <em>opțional</em></span>
+            <input id="f-contact" type="text" autocomplete="off" placeholder="site.ro · 0722 000 000"></label>
+        </div>
+      </details>
+
+      <details open class="sec">
+        <summary>Tipografie</summary>
+        <div class="fields">
+          <div class="font-list" id="fonts" role="radiogroup" aria-label="Pereche de fonturi"></div>
+          <div class="field"><span>Cuvântul evidențiat</span>
+            <div class="seg" id="hl" role="radiogroup">
+              <button type="button" data-v="italic">Italic</button>
+              <button type="button" data-v="marker">Marker</button>
+              <button type="button" data-v="color">Culoare</button>
+              <button type="button" data-v="underline">Subliniat</button>
+              <button type="button" data-v="outline">Contur</button>
+            </div></div>
+          <label class="field"><span>Mărime titlu <output id="o-headScale"></output></span>
+            <input id="headScale" type="range" min="0.7" max="1.3" step="0.05"></label>
+        </div>
+      </details>
+
+      <details open class="sec">
+        <summary>Culori</summary>
+        <div class="fields">
+          <div class="palettes" id="palettes" role="radiogroup" aria-label="Palete"></div>
+          <div class="colors">
+            <label class="color"><input type="color" id="c-bg"><span>Fundal</span></label>
+            <label class="color"><input type="color" id="c-surface"><span>Suprafață</span></label>
+            <label class="color"><input type="color" id="c-text"><span>Text</span></label>
+            <label class="color"><input type="color" id="c-accent"><span>Accent</span></label>
+          </div>
+          <div class="from-brand">
+            <label class="color"><input type="color" id="c-base" value="#2C46F0"><span>Culoarea brandului</span></label>
+            <button type="button" class="btn small" id="btn-from-base">Paletă deschisă</button>
+            <button type="button" class="btn small" id="btn-from-base-dark">Paletă închisă</button>
+          </div>
+          <div class="field"><span>Varianta de culoare</span>
+            <div class="seg" id="variant" role="radiogroup">
+              <button type="button" data-v="normal">Normală</button>
+              <button type="button" data-v="inv">Inversată</button>
+              <button type="button" data-v="accent">Pe accent</button>
+            </div></div>
+          <label class="check"><input type="checkbox" id="autoContrast"> Corectează automat contrastul</label>
+        </div>
+      </details>
+
+      <details open class="sec">
+        <summary>Fundal și imagini</summary>
+        <div class="fields">
+          <div class="field"><span>Fundal</span>
+            <div class="seg wrap" id="bgMode" role="radiogroup">
+              <button type="button" data-v="auto">Al stilului</button>
+              <button type="button" data-v="solid">Plin</button>
+              <button type="button" data-v="gradient">Degradeu</button>
+              <button type="button" data-v="mesh">Gradient moale</button>
+              <button type="button" data-v="pattern">Model</button>
+              <button type="button" data-v="image">Foto</button>
+            </div></div>
+          <label class="field" id="pattern-field"><span>Model</span>
+            <select id="pattern">
+              <option value="dots">Buline</option>
+              <option value="grid">Grilă</option>
+              <option value="lines">Dungi</option>
+              <option value="rings">Cercuri</option>
+            </select></label>
+
+          <div class="drop" id="drop-photo" tabindex="0">
+            <input type="file" id="file-photo" accept="image/*" hidden>
+            <div class="drop-thumb" id="thumb-photo"></div>
+            <div class="drop-text"><strong>Fotografie</strong><span id="photo-info">Trage o imagine aici sau apasă</span></div>
+            <button type="button" class="btn small ghost" id="rm-photo" hidden>Scoate</button>
+          </div>
+          <div class="photo-opts" id="photo-opts" hidden>
+            <div class="field"><span>Filtru</span>
+              <div class="seg" id="photoFilter" role="radiogroup">
+                <button type="button" data-v="none">Original</button>
+                <button type="button" data-v="bw">Alb-negru</button>
+                <button type="button" data-v="duo">Duoton</button>
+                <button type="button" data-v="film">Peliculă</button>
+              </div></div>
+            <label class="field"><span>Încadrare orizontală</span><input id="fx" type="range" min="0" max="1" step="0.01"></label>
+            <label class="field"><span>Încadrare verticală</span><input id="fy" type="range" min="0" max="1" step="0.01"></label>
+            <label class="field"><span>Zoom</span><input id="zoom" type="range" min="1" max="2" step="0.02"></label>
+            <label class="field"><span>Voal peste foto</span><input id="overlay" type="range" min="0.2" max="0.9" step="0.02"></label>
+          </div>
+
+          <div class="drop" id="drop-logo" tabindex="0">
+            <input type="file" id="file-logo" accept="image/png,image/svg+xml,image/webp,image/jpeg" hidden>
+            <div class="drop-thumb logo" id="thumb-logo"></div>
+            <div class="drop-text"><strong>Logo</strong><span>PNG transparent sau SVG</span></div>
+            <button type="button" class="btn small ghost" id="rm-logo" hidden>Scoate</button>
+          </div>
+          <div class="field" id="logo-opts" hidden><span>Culoare logo</span>
+            <div class="seg" id="logoTint" role="radiogroup">
+              <button type="button" data-v="original">Originală</button>
+              <button type="button" data-v="auto">Ca textul</button>
+            </div></div>
+          <label class="field"><span>Granulație <output id="o-grain"></output></span>
+            <input id="grain" type="range" min="0" max="0.3" step="0.01"></label>
+        </div>
+      </details>
+
+      <details open class="sec">
+        <summary>Formate</summary>
+        <div class="formats" id="formats"></div>
+      </details>
+
+      <details class="sec">
+        <summary>Kit de brand</summary>
+        <div class="fields">
+          <p class="hint">Salvează culorile, fonturile, logoul și datele de contact ca să le refolosești la fiecare postare.</p>
+          <div class="kit-save">
+            <input id="kit-name" type="text" placeholder="Numele kitului" autocomplete="off">
+            <button type="button" class="btn small" id="btn-kit-save">Salvează</button>
+          </div>
+          <ul class="kits" id="kits"></ul>
+          <div class="kit-io">
+            <button type="button" class="btn small ghost" id="btn-kit-export">Exportă fișier</button>
+            <label class="btn small ghost">Importă fișier<input type="file" id="kit-import" accept="application/json" hidden></label>
+          </div>
+        </div>
+      </details>
+    </aside>
+
+    <!-- ============ PREVIZUALIZARE ============ -->
+    <section class="stage" aria-label="Previzualizare">
+      <div class="stage-head">
+        <h2>Stil</h2>
+        <p id="tpl-note"></p>
+      </div>
+      <div class="strip" id="strip" role="radiogroup" aria-label="Stiluri"></div>
+      <div class="stage-head">
+        <h2>Formate</h2>
+        <p id="fmt-note"></p>
+      </div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <!-- ============ CONSULTANT ============ -->
+    <aside class="panel insights" aria-label="Analiza postării">
+      <div class="score">
+        <div class="score-ring" id="score-ring"><span id="score">–</span></div>
+        <div>
+          <strong id="score-label">Analiză</strong>
+          <p id="score-sub">Verific textul, contrastul și formatele.</p>
+        </div>
+      </div>
+      <ul class="checks" id="checks"></ul>
+
+      <div class="caption">
+        <h3>Descrierea postării</h3>
+        <div class="seg" id="capKind" role="radiogroup">
+          <button type="button" data-v="direct">Directă</button>
+          <button type="button" data-v="oferta">Oferta întâi</button>
+          <button type="button" data-v="lista">Cu listă</button>
+        </div>
+        <label class="field"><span>Cuvinte cheie pentru hashtaguri</span>
+          <input id="keywords" type="text" placeholder="cafea, cluj, brunch" autocomplete="off"></label>
+        <textarea id="caption" rows="9" aria-label="Descriere"></textarea>
+        <div class="caption-foot">
+          <span id="cap-count"></span>
+          <button type="button" class="btn small" id="btn-copy">Copiază</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="zoom-dlg" aria-label="Previzualizare mare">
+    <div class="dlg-head">
+      <strong id="zoom-title"></strong>
+      <div class="dlg-actions">
+        <button type="button" class="btn small" id="zoom-png">PNG</button>
+        <button type="button" class="btn small" id="zoom-jpg">JPG</button>
+        <button type="button" class="btn small ghost" id="zoom-close">Închide</button>
+      </div>
+    </div>
+    <div class="dlg-body"><canvas id="zoom-canvas"></canvas></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/color.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/advisor.js"></script>
+  <script src="js/zip.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
